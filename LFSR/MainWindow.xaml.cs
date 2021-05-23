@@ -1,7 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Windows;
+using System.IO;
+using System.Linq;
 
 namespace lab_4
 {
@@ -12,6 +13,8 @@ namespace lab_4
     {
         public static string srcPath;
         public static string destPath;
+        public static string srcExtension;
+        public static string destExtension;
 
         public MainWindow()
         {
@@ -26,7 +29,7 @@ namespace lab_4
                 LFSR.register = inputKey;
 
                 LFSR.Crypt(srcPath, destPath);
-                MessageBox.Show("The file was successfully encrypted");
+                MessageBox.Show("Successfully crypted!");
             }
         }
 
@@ -37,6 +40,11 @@ namespace lab_4
             if (openFileDialog.ShowDialog() == true)
             {
                 path = openFileDialog.FileName;
+                srcExtension = Path.GetExtension(path);
+                if(srcExtension.Contains("-crypt"))
+                {
+                    destExtension = srcExtension.Substring(0, 4);
+                }
             }
             srcPath = path;
             src.Text = srcPath;
@@ -49,9 +57,14 @@ namespace lab_4
             if (saveFileDialog.ShowDialog() == true)
             {
                 path = saveFileDialog.FileName;
+                if (srcExtension.Contains("-crypt"))
+                {
+                    destExtension = srcExtension.Substring(0, 4);
+                }
+                else
+                    path += srcExtension + "-crypt";
             }
-
-            destPath = path;
+            destPath = path + destExtension;
             dest.Text = destPath;
         }
         private bool DataIsCorrect()
@@ -63,7 +76,7 @@ namespace lab_4
             }
             catch
             {
-                MessageBox.Show("You have inputed incorrect data");
+                MessageBox.Show("You have inputed incorrect data.");
                 return false;
             }
         }
